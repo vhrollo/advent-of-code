@@ -1,6 +1,7 @@
 import numpy as np
 
-M = np.fromregex('test.txt', r'\d+', [('', int)]
+# this was too good to not use lin alg
+M = np.fromregex('input.txt', r'\d+', [('', int)]
     *6).view(int).reshape(-1,3,2).swapaxes(1,2)
 
 S = np.kron(np.eye(2), M[..., :2])
