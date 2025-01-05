@@ -147,7 +147,8 @@ func part1(registerValues []int, programOpcodes []int) {
 }
 
 
-// part 2
+// part 2 - brute force
+// this needs to be optimized
 func part2(originalRegisters []int, programOpcodes []int) {
     fmt.Println("Part 2")
 
