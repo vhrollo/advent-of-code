@@ -16,15 +16,7 @@ for x in output_sequence:
     b = b ^ c
     opt.add((b % 8) == x)
     a = a / (1 << 3)
-
-# Final condition
 opt.add(a == 0)
-
-# Minimize s
 opt.minimize(s)
-
-# Solve and print result
-if opt.check() == 'sat':
-    print(opt.model().eval(s))
-else:
-    print("No solution found")
+assert str(opt.check()) == "sat"
+print(opt.model().eval(s))
