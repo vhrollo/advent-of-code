@@ -104,12 +104,22 @@ func cdv (a int, registerValues *[]int) {
 }
 
 
-func part1(registerValues []int, programOpcodes []int) {
+func part1(register []int, programOpcodes []int) {
+	registerValues := make([]int, len(register))
+	copy(registerValues, register)
 	ptr := 0
 	var stdstr []int
+	fmt.Println("start")
+	fmt.Println(ptr ,registerValues)
+	fmt.Println(programOpcodes[0:2])
 	for ptr < len(programOpcodes) - 1 {
+
 		opcode := programOpcodes[ptr]
 		combo := programOpcodes[ptr + 1]
+		// fmt.Println("---")
+		// fmt.Println(ptr ,registerValues)
+		// fmt.Println(opcode, combo)
+		// fmt.Println(stdstr)
 		switch opcode {
 		case 0:
 			adv(combo, &registerValues)
@@ -132,6 +142,7 @@ func part1(registerValues []int, programOpcodes []int) {
 			fmt.Println("This program is not valid")
 		}
 		ptr += 2
+
 	}
 	fmt.Println("Part 1")
 	fmt.Println("Register values:", registerValues)
@@ -150,20 +161,20 @@ func part1(registerValues []int, programOpcodes []int) {
 // part 2 - brute force
 // this needs to be optimized
 func part2(originalRegisters []int, programOpcodes []int) {
-    fmt.Println("Part 2")
-
+	fmt.Println("Part 2")
+	
     // We'll start from A = 1 if "lowest positive" is required.
     for A := 1; A < 999999999; A++ {
-        // Make a fresh copy of the registers.
+		// Make a fresh copy of the registers.
         copyOfRegisters := make([]int, len(originalRegisters))
         copy(copyOfRegisters, originalRegisters)
-
+		
         // Set register A in this fresh copy
         copyOfRegisters[0] = A
-
+		
         // Run helper
         if helper(copyOfRegisters, programOpcodes) {
-            // If it matched, print and break
+			// If it matched, print and break
             fmt.Println(A)
             return
         }
@@ -191,16 +202,16 @@ func helper(registerValues []int, programOpcodes []int) bool {
 			ptr -= 2
 		case 4:
 			bxc(&registerValues)
-		
-		case 5: // out
+			
+			case 5: // out
 			out(combo, &registerValues, &stdstr)
-
+			
 			// If we've already output as many values as the program has instructions,
 			// it's probably time to decide success/failure right away.
 			if compareptr >= len(programOpcodes) {
 				return false // We produced more output than we have instructions to match!
 			}
-
+			
 			if stdstr[compareptr] != programOpcodes[compareptr] {
 				// Mismatch => immediately return false
 				return false
@@ -223,10 +234,35 @@ func helper(registerValues []int, programOpcodes []int) bool {
 	return false
 }
 
+// trying again
+
+
+// part 1 optimized - reverse engineering
+func part1_reverse(registerValues []int) {
+	a, b, c := registerValues[0], registerValues[1], registerValues[2]
+	stdstr := []int{}
+	for a > 0 {
+		b = a % 8
+		b = b ^ 2
+		c = a / (1 << b)
+		b = b ^ 3
+		b = b ^ c
+		stdstr = append(stdstr, b % 8)
+		a = a / (1 << 3)
+	}
+	fmt.Println(stdstr)
+}
+
+// part2 optimized - reverse engineering
+func part2_reverse(registerValues []int, programOpcodes []int) {
+	a, b, c := registerValues[0], registerValues[1], registerValues[2]
+	stdstr := []int{}
+	
+
 
 func main() {
 	data := getData("input.txt")
 	registerValues, programOpcodes := parseData(data)
 	part1(registerValues, programOpcodes)
-	part2(registerValues, programOpcodes)
+	part1_reverse(registerValues)
 }
