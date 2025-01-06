@@ -234,8 +234,9 @@ func helper(registerValues []int, programOpcodes []int) bool {
 	return false
 }
 
-// trying again
-
+// first i optimized the program by reverse engineering it
+// then i tried to reconstruct the program building it from the end to start
+// recursively. This stuff above is bloated, but a good start
 
 // part 1 optimized - reverse engineering
 func part1_reverse(registerValues []int) {
@@ -253,16 +254,39 @@ func part1_reverse(registerValues []int) {
 	fmt.Println(stdstr)
 }
 
-// part2 optimized - reverse engineering
-func part2_reverse(registerValues []int, programOpcodes []int) {
-	a, b, c := registerValues[0], registerValues[1], registerValues[2]
-	stdstr := []int{}
-	
+// trying to reconstruct a
+func part2_recon(programOpcodes []int) {
+	var rec func(p, r int) bool
+	rec = func (p,r int) bool {
+		if p < 0 {
+			fmt.Println(r)
+			return true
+		}	
+		for d := 0; d < 8; d++ {
+			a, b, c := (r << 3) | d, 0, 0
+			var w int
 
+			b = a % 8
+			b = b ^ 2
+			c = a / (1 << b)
+			b = b ^ 3
+			b = b ^ c
+			w = b % 8
+			a = a / (1 << 3)
+			
+			if w == programOpcodes[p] && rec(p - 1, r << 3 | d) {
+				return true
+			}
+		}
+		return false
+	}
+
+	rec(len(programOpcodes) - 1, 0)
+}
 
 func main() {
 	data := getData("input.txt")
 	registerValues, programOpcodes := parseData(data)
-	part1(registerValues, programOpcodes)
 	part1_reverse(registerValues)
+	part2_recon(programOpcodes)
 }
