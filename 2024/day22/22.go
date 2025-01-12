@@ -12,8 +12,6 @@ const magic = 0x1000000 // 16777216
 
 type sequence [4]int
 
-var memoSeq sync.Map
-
 func getData() []int {
 	dat, _ := os.ReadFile("input.txt")
 	lines := strings.Split(strings.TrimSpace(string(dat)), "\n")
